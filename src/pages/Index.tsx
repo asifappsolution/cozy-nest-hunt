@@ -6,7 +6,7 @@ import { Search } from "lucide-react";
 
 const SAMPLE_PROPERTIES = [
   {
-    id: 1,
+    id: "1",
     title: "Modern 2BHK Apartment in Gulshan",
     location: "Gulshan-1, Dhaka",
     price: 35000,
@@ -16,7 +16,7 @@ const SAMPLE_PROPERTIES = [
     type: "Family",
   },
   {
-    id: 2,
+    id: "2",
     title: "Luxurious 3BHK with City View",
     location: "Banani, Dhaka",
     price: 45000,
@@ -26,7 +26,7 @@ const SAMPLE_PROPERTIES = [
     type: "Family",
   },
   {
-    id: 3,
+    id: "3",
     title: "Cozy Bachelor Pad",
     location: "Dhanmondi, Dhaka",
     price: 15000,
