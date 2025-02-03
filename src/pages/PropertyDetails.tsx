@@ -11,6 +11,12 @@ const PropertyDetails = () => {
   const { data: property, isLoading } = useQuery({
     queryKey: ["property", id],
     queryFn: async () => {
+      // Validate if the ID is in UUID format
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      if (!id || !uuidRegex.test(id)) {
+        throw new Error("Invalid property ID format");
+      }
+
       const { data, error } = await supabase
         .from("properties")
         .select(`
@@ -25,6 +31,7 @@ const PropertyDetails = () => {
       if (error) throw error;
       return data;
     },
+    retry: false,
   });
 
   if (isLoading) {
@@ -44,6 +51,9 @@ const PropertyDetails = () => {
     return (
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-2xl font-bold">Property not found</h1>
+        <p className="text-muted-foreground mt-2">
+          The property you're looking for doesn't exist or has been removed.
+        </p>
       </div>
     );
   }
