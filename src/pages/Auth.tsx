@@ -54,7 +54,12 @@ const Auth = () => {
 
       if (result.error) {
         // Handle specific error cases
-        if (result.error.message.includes("Invalid login credentials")) {
+        if (result.error.message.includes("Email not confirmed")) {
+          toast({
+            title: "Email Verification Required",
+            description: "Please check your email and click the verification link before logging in. Check your spam folder if you don't see it.",
+          });
+        } else if (result.error.message.includes("Invalid login credentials")) {
           toast({
             variant: "destructive",
             title: "Login Failed",
@@ -81,9 +86,9 @@ const Auth = () => {
         if (result.data?.user) {
           toast({
             title: "Signed up successfully",
-            description: "Please check your email to verify your account",
+            description: "Please check your email to verify your account. Check your spam folder if you don't see it.",
           });
-          // Optionally navigate to a welcome page or stay on the auth page
+          // Stay on the auth page until email is verified
         }
       }
     } catch (error: any) {
