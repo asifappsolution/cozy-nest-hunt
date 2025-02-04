@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Bed, Bath, MapPin } from "lucide-react";
+import { toast } from "sonner";
 
 const PropertyDetails = () => {
   const { id } = useParams();
@@ -14,6 +15,7 @@ const PropertyDetails = () => {
       // Validate if the ID is in UUID format
       const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
       if (!id || !uuidRegex.test(id)) {
+        toast.error("Invalid property ID format");
         throw new Error("Invalid property ID format");
       }
 
@@ -28,7 +30,16 @@ const PropertyDetails = () => {
         .eq("id", id)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        toast.error("Error loading property");
+        throw error;
+      }
+      
+      if (!data) {
+        toast.error("Property not found");
+        throw new Error("Property not found");
+      }
+
       return data;
     },
     retry: false,
