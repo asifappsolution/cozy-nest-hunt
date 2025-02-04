@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
@@ -15,6 +15,17 @@ const Auth = () => {
   const handleAuth = async (type: "login" | "signup") => {
     try {
       setLoading(true);
+
+      // Validate password length for signup
+      if (type === "signup" && password.length < 6) {
+        toast({
+          variant: "destructive",
+          title: "Invalid Password",
+          description: "Password should be at least 6 characters long.",
+        });
+        return;
+      }
+
       let result;
 
       if (type === "login") {
@@ -29,15 +40,35 @@ const Auth = () => {
         });
       }
 
-      if (result.error) throw result.error;
+      if (result.error) {
+        // Handle specific error cases
+        if (result.error.message.includes("Invalid login credentials")) {
+          toast({
+            variant: "destructive",
+            title: "Login Failed",
+            description: "Invalid email or password. Please try again.",
+          });
+        } else {
+          toast({
+            variant: "destructive",
+            title: "Error",
+            description: result.error.message,
+          });
+        }
+        return;
+      }
 
-      toast({
-        title: type === "login" ? "Logged in successfully" : "Signed up successfully",
-        description: type === "signup" ? "Please check your email to verify your account" : undefined,
-      });
-
+      // Handle successful auth
       if (type === "login") {
+        toast({
+          title: "Logged in successfully",
+        });
         navigate("/admin");
+      } else {
+        toast({
+          title: "Signed up successfully",
+          description: "Please check your email to verify your account",
+        });
       }
     } catch (error: any) {
       toast({
@@ -74,6 +105,11 @@ const Auth = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
+            {password.length > 0 && password.length < 6 && (
+              <p className="text-sm text-destructive">
+                Password must be at least 6 characters long
+              </p>
+            )}
           </div>
         </div>
 
