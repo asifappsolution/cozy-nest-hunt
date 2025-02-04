@@ -23,6 +23,7 @@ const Auth = () => {
           title: "Invalid Password",
           description: "Password should be at least 6 characters long.",
         });
+        setLoading(false);
         return;
       }
 
@@ -65,10 +66,14 @@ const Auth = () => {
         });
         navigate("/admin");
       } else {
-        toast({
-          title: "Signed up successfully",
-          description: "Please check your email to verify your account",
-        });
+        // Check if the signup was successful and user was created
+        if (result.data?.user) {
+          toast({
+            title: "Signed up successfully",
+            description: "Please check your email to verify your account",
+          });
+          // Optionally navigate to a welcome page or stay on the auth page
+        }
       }
     } catch (error: any) {
       toast({
