@@ -49,6 +49,9 @@ const Auth = () => {
         result = await supabase.auth.signUp({
           email: email.trim(),
           password,
+          options: {
+            emailRedirectTo: window.location.origin + "/auth"
+          }
         });
       }
 
@@ -56,8 +59,8 @@ const Auth = () => {
         // Handle specific error cases
         if (result.error.message.includes("Email not confirmed")) {
           toast({
-            title: "Email Verification Required",
-            description: "Please check your email and click the verification link before logging in. Check your spam folder if you don't see it.",
+            title: "Email Not Verified",
+            description: "Please check your email and verify your account before logging in. Don't forget to check your spam folder!",
           });
         } else if (result.error.message.includes("Invalid login credentials")) {
           toast({
@@ -78,15 +81,16 @@ const Auth = () => {
       // Handle successful auth
       if (type === "login") {
         toast({
-          title: "Logged in successfully",
+          title: "Success",
+          description: "Logged in successfully",
         });
         navigate("/admin");
       } else {
         // Check if the signup was successful and user was created
         if (result.data?.user) {
           toast({
-            title: "Signed up successfully",
-            description: "Please check your email to verify your account. Check your spam folder if you don't see it.",
+            title: "Account Created",
+            description: "Please check your email for the verification link. Don't forget to check your spam folder!",
           });
           // Stay on the auth page until email is verified
         }
