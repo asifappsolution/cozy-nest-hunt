@@ -10,6 +10,7 @@ import NotFound from "./pages/NotFound";
 import PropertyDetails from "./pages/PropertyDetails";
 import CreateProperty from "./pages/CreateProperty";
 import Admin from "./pages/Admin";
+import Auth from "./pages/Auth";
 
 const queryClient = new QueryClient();
 
@@ -32,6 +33,7 @@ const App = () => (
           <Route path="/property/:id" element={<PropertyDetails />} />
           <Route path="/create-property" element={<CreateProperty />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/auth" element={<Auth />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

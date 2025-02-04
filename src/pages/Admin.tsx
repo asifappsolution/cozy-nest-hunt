@@ -2,11 +2,34 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { PropertyCard } from "@/components/PropertyCard";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Plus } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useToast } from "@/components/ui/use-toast";
 
 const Admin = () => {
-  const { data: properties, isLoading } = useQuery({
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast({
+          variant: "destructive",
+          title: "Authentication required",
+          description: "Please log in to access the admin area",
+        });
+        navigate("/auth");
+      }
+      setIsLoading(false);
+    };
+
+    checkAuth();
+  }, [navigate, toast]);
+
+  const { data: properties, isLoading: propertiesLoading } = useQuery({
     queryKey: ["admin-properties"],
     queryFn: async () => {
       const { data: properties, error } = await supabase
@@ -22,9 +45,10 @@ const Admin = () => {
       if (error) throw error;
       return properties;
     },
+    enabled: !isLoading, // Only fetch properties after auth check
   });
 
-  if (isLoading) {
+  if (isLoading || propertiesLoading) {
     return <div className="container mx-auto px-4 py-8">Loading...</div>;
   }
 
