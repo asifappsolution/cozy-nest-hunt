@@ -16,6 +16,17 @@ const Auth = () => {
     try {
       setLoading(true);
 
+      // Validate email
+      if (!email) {
+        toast({
+          variant: "destructive",
+          title: "Invalid Email",
+          description: "Please enter your email address.",
+        });
+        setLoading(false);
+        return;
+      }
+
       // Validate password length for signup
       if (type === "signup" && password.length < 6) {
         toast({
@@ -31,12 +42,12 @@ const Auth = () => {
 
       if (type === "login") {
         result = await supabase.auth.signInWithPassword({
-          email,
+          email: email.trim(),
           password,
         });
       } else {
         result = await supabase.auth.signUp({
-          email,
+          email: email.trim(),
           password,
         });
       }
@@ -101,6 +112,7 @@ const Auth = () => {
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              required
             />
           </div>
           <div className="space-y-2">
@@ -109,6 +121,7 @@ const Auth = () => {
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              required
             />
             {password.length > 0 && password.length < 6 && (
               <p className="text-sm text-destructive">
