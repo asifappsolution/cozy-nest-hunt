@@ -3,41 +3,28 @@ import { SearchFilters } from "@/components/SearchFilters";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
-
-const SAMPLE_PROPERTIES = [
-  {
-    id: "1",
-    title: "Modern 2BHK Apartment in Gulshan",
-    location: "Gulshan-1, Dhaka",
-    price: 35000,
-    bedrooms: 2,
-    bathrooms: 2,
-    imageUrl: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=500",
-    type: "Family",
-  },
-  {
-    id: "2",
-    title: "Luxurious 3BHK with City View",
-    location: "Banani, Dhaka",
-    price: 45000,
-    bedrooms: 3,
-    bathrooms: 2,
-    imageUrl: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=500",
-    type: "Family",
-  },
-  {
-    id: "3",
-    title: "Cozy Bachelor Pad",
-    location: "Dhanmondi, Dhaka",
-    price: 15000,
-    bedrooms: 1,
-    bathrooms: 1,
-    imageUrl: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=500",
-    type: "Bachelor",
-  },
-];
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
+  const { data: properties, isLoading } = useQuery({
+    queryKey: ["properties"],
+    queryFn: async () => {
+      const { data: properties, error } = await supabase
+        .from("properties")
+        .select(`
+          *,
+          property_images (
+            image_url
+          )
+        `)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      return properties;
+    },
+  });
+
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
@@ -69,11 +56,25 @@ const Index = () => {
         </div>
 
         <h2 className="text-2xl font-semibold mb-6">Featured Properties</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {SAMPLE_PROPERTIES.map((property) => (
-            <PropertyCard key={property.id} {...property} />
-          ))}
-        </div>
+        {isLoading ? (
+          <div>Loading properties...</div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {properties?.map((property) => (
+              <PropertyCard
+                key={property.id}
+                id={property.id}
+                title={property.title}
+                location={property.location}
+                price={property.price}
+                bedrooms={property.bedrooms}
+                bathrooms={property.bathrooms}
+                imageUrl={property.property_images?.[0]?.image_url || "/placeholder.svg"}
+                type={property.tenant_type}
+              />
+            ))}
+          </div>
+        )}
       </main>
     </div>
   );
