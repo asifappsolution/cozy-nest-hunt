@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -24,15 +25,23 @@ export function PropertyCard({
   imageUrl,
   type,
 }: PropertyCardProps) {
+  // Use a real estate placeholder image if the property image is not available
+  const fallbackImage = "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&w=800&h=400&q=80";
+
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    e.currentTarget.src = fallbackImage;
+  };
+
   return (
     <Link to={`/property/${id}`}>
       <Card className="overflow-hidden transition-all hover:shadow-lg animate-fade-in">
         <CardHeader className="p-0">
           <div className="relative h-48 overflow-hidden">
             <img
-              src={imageUrl}
+              src={imageUrl || fallbackImage}
               alt={title}
               className="object-cover w-full h-full transition-transform hover:scale-105"
+              onError={handleImageError}
             />
             <Badge className="absolute top-2 right-2 bg-primary">{type}</Badge>
           </div>
