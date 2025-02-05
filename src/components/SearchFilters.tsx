@@ -16,7 +16,7 @@ interface FiltersState {
   bedrooms: string | null;
   tenantType: string | null;
   priceRange: [number, number];
-  setFilters: (filters: Partial<Omit<FiltersState, "setFilters">>) => void;
+  setFilters: (filters: Partial<Omit<FiltersState, "setFilters" | "resetFilters">>) => void;
   resetFilters: () => void;
 }
 
@@ -37,7 +37,7 @@ export const useFiltersStore = create<FiltersState>((set) => ({
 
 export function SearchFilters() {
   const { propertyType, bedrooms, tenantType, priceRange, setFilters, resetFilters } = useFiltersStore();
-  const [localPriceRange, setLocalPriceRange] = useState(priceRange);
+  const [localPriceRange, setLocalPriceRange] = useState<[number, number]>(priceRange);
 
   const handleApplyFilters = () => {
     setFilters({ priceRange: localPriceRange });
