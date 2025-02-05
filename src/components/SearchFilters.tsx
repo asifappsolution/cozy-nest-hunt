@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -8,14 +9,47 @@ import {
 } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { useState } from "react";
+import { create } from "zustand";
+
+interface FiltersState {
+  propertyType: string | null;
+  bedrooms: string | null;
+  tenantType: string | null;
+  priceRange: [number, number];
+  setFilters: (filters: Partial<Omit<FiltersState, "setFilters">>) => void;
+  resetFilters: () => void;
+}
+
+export const useFiltersStore = create<FiltersState>((set) => ({
+  propertyType: null,
+  bedrooms: null,
+  tenantType: null,
+  priceRange: [5000, 50000],
+  setFilters: (filters) => set((state) => ({ ...state, ...filters })),
+  resetFilters: () => 
+    set({
+      propertyType: null,
+      bedrooms: null,
+      tenantType: null,
+      priceRange: [5000, 50000],
+    }),
+}));
 
 export function SearchFilters() {
-  const [priceRange, setPriceRange] = useState([5000, 50000]);
+  const { propertyType, bedrooms, tenantType, priceRange, setFilters, resetFilters } = useFiltersStore();
+  const [localPriceRange, setLocalPriceRange] = useState(priceRange);
+
+  const handleApplyFilters = () => {
+    setFilters({ priceRange: localPriceRange });
+  };
 
   return (
     <div className="p-4 space-y-4 bg-card rounded-lg shadow-sm">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Select>
+        <Select
+          value={propertyType || ""}
+          onValueChange={(value) => setFilters({ propertyType: value || null })}
+        >
           <SelectTrigger>
             <SelectValue placeholder="Property Type" />
           </SelectTrigger>
@@ -27,7 +61,10 @@ export function SearchFilters() {
           </SelectContent>
         </Select>
 
-        <Select>
+        <Select
+          value={bedrooms || ""}
+          onValueChange={(value) => setFilters({ bedrooms: value || null })}
+        >
           <SelectTrigger>
             <SelectValue placeholder="Bedrooms" />
           </SelectTrigger>
@@ -39,7 +76,10 @@ export function SearchFilters() {
           </SelectContent>
         </Select>
 
-        <Select>
+        <Select
+          value={tenantType || ""}
+          onValueChange={(value) => setFilters({ tenantType: value || null })}
+        >
           <SelectTrigger>
             <SelectValue placeholder="Tenant Type" />
           </SelectTrigger>
@@ -59,17 +99,20 @@ export function SearchFilters() {
           max={100000}
           min={0}
           step={1000}
-          value={priceRange}
-          onValueChange={setPriceRange}
+          value={localPriceRange}
+          onValueChange={setLocalPriceRange}
           className="py-4"
         />
         <div className="flex justify-between text-sm text-muted-foreground">
-          <span>৳{priceRange[0].toLocaleString()}</span>
-          <span>৳{priceRange[1].toLocaleString()}</span>
+          <span>৳{localPriceRange[0].toLocaleString()}</span>
+          <span>৳{localPriceRange[1].toLocaleString()}</span>
         </div>
       </div>
 
-      <Button className="w-full">Apply Filters</Button>
+      <div className="flex gap-2">
+        <Button className="flex-1" onClick={handleApplyFilters}>Apply Filters</Button>
+        <Button variant="outline" onClick={resetFilters}>Reset</Button>
+      </div>
     </div>
   );
 }

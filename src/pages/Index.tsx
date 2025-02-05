@@ -1,16 +1,21 @@
+
 import { PropertyCard } from "@/components/PropertyCard";
-import { SearchFilters } from "@/components/SearchFilters";
+import { SearchFilters, useFiltersStore } from "@/components/SearchFilters";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useState } from "react";
 
 const Index = () => {
+  const [searchLocation, setSearchLocation] = useState("");
+  const { propertyType, bedrooms, tenantType, priceRange } = useFiltersStore();
+
   const { data: properties, isLoading } = useQuery({
-    queryKey: ["properties"],
+    queryKey: ["properties", propertyType, bedrooms, tenantType, priceRange, searchLocation],
     queryFn: async () => {
-      const { data: properties, error } = await supabase
+      let query = supabase
         .from("properties")
         .select(`
           *,
@@ -20,10 +25,33 @@ const Index = () => {
         `)
         .order("created_at", { ascending: false });
 
+      // Apply filters
+      if (propertyType) {
+        query = query.eq("property_type", propertyType);
+      }
+      if (bedrooms) {
+        query = query.eq("bedrooms", parseInt(bedrooms));
+      }
+      if (tenantType) {
+        query = query.eq("tenant_type", tenantType);
+      }
+      if (priceRange) {
+        query = query.gte("price", priceRange[0]).lte("price", priceRange[1]);
+      }
+      if (searchLocation) {
+        query = query.ilike("location", `%${searchLocation}%`);
+      }
+
+      const { data: properties, error } = await query;
+
       if (error) throw error;
       return properties;
     },
   });
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -37,15 +65,17 @@ const Index = () => {
           <p className="text-lg text-center mb-8 max-w-2xl mx-auto">
             Discover thousands of rental properties in Bangladesh
           </p>
-          <div className="max-w-2xl mx-auto flex gap-2">
+          <form onSubmit={handleSearch} className="max-w-2xl mx-auto flex gap-2">
             <Input
               placeholder="Search by location..."
               className="bg-white/10 border-white/20 text-white placeholder:text-white/60"
+              value={searchLocation}
+              onChange={(e) => setSearchLocation(e.target.value)}
             />
-            <Button variant="secondary" size="icon">
+            <Button type="submit" variant="secondary" size="icon">
               <Search className="h-4 w-4" />
             </Button>
-          </div>
+          </form>
         </div>
       </section>
 
@@ -55,9 +85,20 @@ const Index = () => {
           <SearchFilters />
         </div>
 
-        <h2 className="text-2xl font-semibold mb-6">Featured Properties</h2>
+        <h2 className="text-2xl font-semibold mb-6">
+          {properties?.length === 0
+            ? "No properties found"
+            : properties?.length === 1
+            ? "1 Property Found"
+            : `${properties?.length || "Featured"} Properties`}
+        </h2>
+        
         {isLoading ? (
-          <div>Loading properties...</div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-[400px] bg-muted animate-pulse rounded-lg" />
+            ))}
+          </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {properties?.map((property) => (
