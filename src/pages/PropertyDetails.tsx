@@ -1,3 +1,4 @@
+
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -5,6 +6,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Bed, Bath, MapPin } from "lucide-react";
 import { toast } from "sonner";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 const PropertyDetails = () => {
   const { id } = useParams();
@@ -73,23 +81,27 @@ const PropertyDetails = () => {
     <div className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="space-y-4">
-          {property.property_images && property.property_images[0] && (
-            <img
-              src={property.property_images[0].image_url}
-              alt={property.title}
-              className="w-full h-[400px] object-cover rounded-lg"
-            />
+          {property.property_images && property.property_images.length > 0 && (
+            <Carousel className="relative w-full">
+              <CarouselContent>
+                {property.property_images.map((image: { image_url: string }, index: number) => (
+                  <CarouselItem key={index}>
+                    <img
+                      src={image.image_url}
+                      alt={`${property.title} - Image ${index + 1}`}
+                      className="w-full h-[400px] object-cover rounded-lg"
+                    />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              {property.property_images.length > 1 && (
+                <>
+                  <CarouselPrevious className="left-2" />
+                  <CarouselNext className="right-2" />
+                </>
+              )}
+            </Carousel>
           )}
-          <div className="flex gap-2">
-            {property.property_images?.slice(1).map((image: { image_url: string }) => (
-              <img
-                key={image.image_url}
-                src={image.image_url}
-                alt={property.title}
-                className="w-24 h-24 object-cover rounded-lg"
-              />
-            ))}
-          </div>
         </div>
 
         <div className="space-y-6">
