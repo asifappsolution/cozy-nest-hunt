@@ -20,7 +20,7 @@ interface FiltersState {
   resetFilters: () => void;
 }
 
-export const useFiltersStore = create<FiltersState>((set) => ({
+export const useFiltersStore = create<FiltersState>()((set) => ({
   propertyType: null,
   bedrooms: null,
   tenantType: null,
@@ -41,6 +41,10 @@ export function SearchFilters() {
 
   const handleApplyFilters = () => {
     setFilters({ priceRange: localPriceRange });
+  };
+
+  const handlePriceRangeChange = (value: number[]) => {
+    setLocalPriceRange(value as [number, number]);
   };
 
   return (
@@ -100,7 +104,7 @@ export function SearchFilters() {
           min={0}
           step={1000}
           value={localPriceRange}
-          onValueChange={setLocalPriceRange}
+          onValueChange={handlePriceRangeChange}
           className="py-4"
         />
         <div className="flex justify-between text-sm text-muted-foreground">
