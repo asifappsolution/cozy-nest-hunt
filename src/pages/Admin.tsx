@@ -12,6 +12,7 @@ const Admin = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -20,15 +21,39 @@ const Admin = () => {
         toast({
           variant: "destructive",
           title: "Authentication required",
-          description: "Please log in to access the admin area",
+          description: "Please log in to access your profile",
         });
         navigate("/auth");
+      } else {
+        setUser(session.user);
       }
       setIsLoading(false);
     };
 
     checkAuth();
   }, [navigate, toast]);
+
+  const { data: properties, isLoading: propertiesLoading } = useQuery({
+    queryKey: ["user-properties", user?.id],
+    queryFn: async () => {
+      if (!user?.id) return [];
+      
+      const { data: properties, error } = await supabase
+        .from("properties")
+        .select(`
+          *,
+          property_images (
+            image_url
+          )
+        `)
+        .eq('user_id', user.id)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      return properties;
+    },
+    enabled: !!user?.id,
+  });
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -38,25 +63,6 @@ const Admin = () => {
     });
     navigate("/");
   };
-
-  const { data: properties, isLoading: propertiesLoading } = useQuery({
-    queryKey: ["admin-properties"],
-    queryFn: async () => {
-      const { data: properties, error } = await supabase
-        .from("properties")
-        .select(`
-          *,
-          property_images (
-            image_url
-          )
-        `)
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-      return properties;
-    },
-    enabled: !isLoading,
-  });
 
   if (isLoading || propertiesLoading) {
     return <div className="container mx-auto px-4 py-8">Loading...</div>;
@@ -74,9 +80,12 @@ const Admin = () => {
                 Back to Home
               </Link>
             </Button>
-            <h2 className="text-lg font-semibold">Admin Dashboard</h2>
+            <h2 className="text-lg font-semibold">Property Owner Dashboard</h2>
           </div>
           <div className="flex items-center gap-4">
+            <span className="text-muted-foreground">
+              {user?.email}
+            </span>
             <Button variant="outline" onClick={handleLogout}>
               <LogOut className="h-4 w-4 mr-2" />
               Logout
@@ -88,7 +97,7 @@ const Admin = () => {
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold">Manage Properties</h1>
+          <h1 className="text-2xl font-bold">My Properties</h1>
           <Button asChild>
             <Link to="/create-property">
               <Plus className="h-4 w-4 mr-2" />
@@ -97,21 +106,33 @@ const Admin = () => {
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {properties?.map((property) => (
-            <PropertyCard
-              key={property.id}
-              id={property.id}
-              title={property.title}
-              location={property.location}
-              price={property.price}
-              bedrooms={property.bedrooms}
-              bathrooms={property.bathrooms}
-              imageUrl={property.property_images?.[0]?.image_url || "/placeholder.svg"}
-              type={property.tenant_type}
-            />
-          ))}
-        </div>
+        {properties?.length === 0 ? (
+          <div className="text-center py-8">
+            <p className="text-muted-foreground mb-4">You haven't listed any properties yet.</p>
+            <Button asChild>
+              <Link to="/create-property">
+                <Plus className="h-4 w-4 mr-2" />
+                Add Your First Property
+              </Link>
+            </Button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {properties?.map((property) => (
+              <PropertyCard
+                key={property.id}
+                id={property.id}
+                title={property.title}
+                location={property.location}
+                price={property.price}
+                bedrooms={property.bedrooms}
+                bathrooms={property.bathrooms}
+                imageUrl={property.property_images?.[0]?.image_url || "/placeholder.svg"}
+                type={property.tenant_type}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
