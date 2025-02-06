@@ -1,6 +1,9 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,13 +26,34 @@ import {
 import { toast } from "sonner";
 import { X } from "lucide-react";
 
+// Define the form validation schema
+const formSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  description: z.string().min(1, "Description is required"),
+  price: z.string().min(1, "Price is required").refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
+    message: "Price must be a positive number",
+  }),
+  location: z.string().min(1, "Location is required"),
+  property_type: z.string().min(1, "Property type is required"),
+  bedrooms: z.string().min(1, "Number of bedrooms is required").refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
+    message: "Bedrooms must be a non-negative number",
+  }),
+  bathrooms: z.string().min(1, "Number of bathrooms is required").refine((val) => !isNaN(Number(val)) && Number(val) >= 0, {
+    message: "Bathrooms must be a non-negative number",
+  }),
+  tenant_type: z.string().min(1, "Tenant type is required"),
+});
+
+type FormValues = z.infer<typeof formSchema>;
+
 const CreateProperty = () => {
   const navigate = useNavigate();
   const [uploading, setUploading] = useState(false);
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
 
-  const form = useForm({
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
       description: "",
@@ -87,7 +111,7 @@ const CreateProperty = () => {
     await Promise.all(uploadPromises);
   };
 
-  const onSubmit = async (values: any) => {
+  const onSubmit = async (values: FormValues) => {
     try {
       setUploading(true);
       const {
@@ -176,6 +200,8 @@ const CreateProperty = () => {
                   <FormControl>
                     <Input
                       type="number"
+                      min="0"
+                      step="0.01"
                       placeholder="Enter monthly rent"
                       {...field}
                     />
@@ -265,6 +291,8 @@ const CreateProperty = () => {
                   <FormControl>
                     <Input
                       type="number"
+                      min="0"
+                      step="1"
                       placeholder="Number of bedrooms"
                       {...field}
                     />
@@ -283,6 +311,8 @@ const CreateProperty = () => {
                   <FormControl>
                     <Input
                       type="number"
+                      min="0"
+                      step="1"
                       placeholder="Number of bathrooms"
                       {...field}
                     />
