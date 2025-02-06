@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -41,6 +42,7 @@ const formSchema = z.object({
     message: "Bathrooms must be a non-negative number",
   }),
   tenant_type: z.string().min(1, "Tenant type is required"),
+  owner_number: z.string().min(1, "Owner number is required"),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -62,6 +64,7 @@ const CreateProperty = () => {
       bedrooms: "",
       bathrooms: "",
       tenant_type: "",
+      owner_number: "",
     },
   });
 
@@ -132,12 +135,13 @@ const CreateProperty = () => {
         bedrooms: parseInt(values.bedrooms),
         bathrooms: parseInt(values.bathrooms),
         tenant_type: values.tenant_type,
+        owner_number: values.owner_number,
         user_id: user.id,
       };
 
       const { data: property, error: propertyError } = await supabase
         .from("properties")
-        .insert([propertyData])
+        .insert(propertyData)
         .select()
         .single();
 
@@ -325,6 +329,24 @@ const CreateProperty = () => {
                 </FormItem>
               )}
             />
+
+            <FormField
+              control={form.control}
+              name="owner_number"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Owner Contact Number</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="text"
+                      placeholder="Enter owner's contact number"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
 
           <div className="space-y-4">
@@ -369,3 +391,4 @@ const CreateProperty = () => {
 };
 
 export default CreateProperty;
+

@@ -17,6 +17,7 @@ export type Database = {
           description: string
           id: string
           location: string
+          owner_number: string
           price: number
           property_type: string
           tenant_type: string
@@ -31,6 +32,7 @@ export type Database = {
           description: string
           id?: string
           location: string
+          owner_number: string
           price: number
           property_type: string
           tenant_type: string
@@ -45,6 +47,7 @@ export type Database = {
           description?: string
           id?: string
           location?: string
+          owner_number?: string
           price?: number
           property_type?: string
           tenant_type?: string
