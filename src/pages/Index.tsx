@@ -11,6 +11,14 @@ import { useState } from "react";
 const Index = () => {
   const [searchLocation, setSearchLocation] = useState("");
   const { propertyType, bedrooms, tenantType, priceRange } = useFiltersStore();
+  const [user, setUser] = useState<any>(null);
+
+  // Get current user
+  useState(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user);
+    });
+  });
 
   const { data: properties, isLoading } = useQuery({
     queryKey: ["properties", propertyType, bedrooms, tenantType, priceRange, searchLocation],
@@ -21,7 +29,8 @@ const Index = () => {
           *,
           property_images (
             image_url
-          )
+          ),
+          user_id
         `)
         .order("created_at", { ascending: false });
 
@@ -112,6 +121,7 @@ const Index = () => {
                 bathrooms={property.bathrooms}
                 imageUrl={property.property_images?.[0]?.image_url || "/placeholder.svg"}
                 type={property.tenant_type}
+                isOwner={user?.id === property.user_id}
               />
             ))}
           </div>

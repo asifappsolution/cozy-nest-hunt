@@ -129,6 +129,7 @@ const Admin = () => {
                 bathrooms={property.bathrooms}
                 imageUrl={property.property_images?.[0]?.image_url || "/placeholder.svg"}
                 type={property.tenant_type}
+                isOwner={true}
               />
             ))}
           </div>
