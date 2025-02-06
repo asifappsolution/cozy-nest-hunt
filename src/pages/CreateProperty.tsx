@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -123,17 +122,22 @@ const CreateProperty = () => {
         return;
       }
 
+      // Create the property object with all required fields
+      const propertyData = {
+        title: values.title,
+        description: values.description,
+        price: parseFloat(values.price),
+        location: values.location,
+        property_type: values.property_type,
+        bedrooms: parseInt(values.bedrooms),
+        bathrooms: parseInt(values.bathrooms),
+        tenant_type: values.tenant_type,
+        user_id: user.id,
+      };
+
       const { data: property, error: propertyError } = await supabase
         .from("properties")
-        .insert([
-          {
-            ...values,
-            price: parseFloat(values.price),
-            bedrooms: parseInt(values.bedrooms),
-            bathrooms: parseInt(values.bathrooms),
-            user_id: user.id,
-          },
-        ])
+        .insert([propertyData])
         .select()
         .single();
 
