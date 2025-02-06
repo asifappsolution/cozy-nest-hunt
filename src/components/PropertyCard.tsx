@@ -2,7 +2,7 @@
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Bed, Bath, MapPin, Edit, Trash2 } from "lucide-react";
+import { Bed, Bath, MapPin, Edit, Trash2, Phone } from "lucide-react";
 import { Button } from "./ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
@@ -17,6 +17,7 @@ interface PropertyCardProps {
   bathrooms: number;
   imageUrl: string;
   type: string;
+  ownerNumber: string;
   isOwner?: boolean;
   onDelete?: () => void;
 }
@@ -30,6 +31,7 @@ export function PropertyCard({
   bathrooms,
   imageUrl,
   type,
+  ownerNumber,
   isOwner = false,
   onDelete,
 }: PropertyCardProps) {
@@ -114,6 +116,10 @@ export function PropertyCard({
           <div className="flex items-center gap-1 text-muted-foreground mt-1">
             <MapPin size={16} />
             <span className="text-sm line-clamp-1">{location}</span>
+          </div>
+          <div className="flex items-center gap-1 text-muted-foreground mt-1">
+            <Phone size={16} />
+            <span className="text-sm">{ownerNumber}</span>
           </div>
         </CardContent>
         <CardFooter className="p-4 pt-0 flex justify-between items-center">
