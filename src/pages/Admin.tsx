@@ -74,8 +74,8 @@ const Admin = () => {
     <div className="min-h-screen bg-background">
       {/* Navigation Bar */}
       <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 items-center justify-between px-4">
-          <div className="flex items-center gap-2 sm:gap-4">
+        <div className="container flex h-16 items-center px-4">
+          <div className="flex items-center gap-2 sm:gap-4 flex-1">
             <Button variant="outline" size={isMobile ? "icon" : "default"} asChild>
               <Link to="/" className="flex items-center gap-2">
                 <Home className="h-4 w-4" />
@@ -86,7 +86,7 @@ const Admin = () => {
               {isMobile ? "Dashboard" : "Property Owner Dashboard"}
             </h2>
           </div>
-          <div className="flex items-center gap-4 sm:gap-6">
+          <div className="flex items-center gap-4 sm:gap-6 ml-auto">
             {!isMobile && (
               <span className="text-sm text-muted-foreground truncate max-w-[200px]">
                 {user?.email}
@@ -96,7 +96,7 @@ const Admin = () => {
               variant="outline" 
               size={isMobile ? "icon" : "default"} 
               onClick={handleLogout}
-              className="relative z-10"
+              className="relative z-10 shrink-0"
             >
               <LogOut className="h-4 w-4" />
               {!isMobile && <span className="ml-2">Logout</span>}
