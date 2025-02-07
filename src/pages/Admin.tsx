@@ -7,12 +7,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { Plus, Home, LogOut } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Admin = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -72,23 +74,31 @@ const Admin = () => {
     <div className="min-h-screen bg-background">
       {/* Navigation Bar */}
       <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button variant="outline" asChild>
+        <div className="container flex h-16 items-center justify-between px-4">
+          <div className="flex items-center gap-2 sm:gap-4">
+            <Button variant="outline" size={isMobile ? "icon" : "default"} asChild>
               <Link to="/" className="flex items-center gap-2">
                 <Home className="h-4 w-4" />
-                Back to Home
+                {!isMobile && "Back to Home"}
               </Link>
             </Button>
-            <h2 className="text-lg font-semibold">Property Owner Dashboard</h2>
+            <h2 className="text-base sm:text-lg font-semibold truncate">
+              {isMobile ? "Dashboard" : "Property Owner Dashboard"}
+            </h2>
           </div>
-          <div className="flex items-center gap-4">
-            <span className="text-muted-foreground">
-              {user?.email}
-            </span>
-            <Button variant="outline" onClick={handleLogout}>
-              <LogOut className="h-4 w-4 mr-2" />
-              Logout
+          <div className="flex items-center gap-2 sm:gap-4">
+            {!isMobile && (
+              <span className="text-sm text-muted-foreground truncate max-w-[200px]">
+                {user?.email}
+              </span>
+            )}
+            <Button 
+              variant="outline" 
+              size={isMobile ? "icon" : "default"} 
+              onClick={handleLogout}
+            >
+              <LogOut className="h-4 w-4" />
+              {!isMobile && "Logout"}
             </Button>
           </div>
         </div>

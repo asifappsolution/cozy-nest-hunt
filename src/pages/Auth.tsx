@@ -1,9 +1,11 @@
+
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { ArrowLeft } from "lucide-react";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
@@ -108,6 +110,14 @@ const Auth = () => {
 
   return (
     <div className="container mx-auto max-w-md px-4 py-8">
+      <div className="mb-6">
+        <Button variant="ghost" size="sm" asChild className="mb-4">
+          <Link to="/" className="flex items-center gap-2">
+            <ArrowLeft className="h-4 w-4" />
+            Back to Home
+          </Link>
+        </Button>
+      </div>
       <div className="space-y-6">
         <div className="text-center">
           <h1 className="text-2xl font-bold">Welcome Back</h1>
