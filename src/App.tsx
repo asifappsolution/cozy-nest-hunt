@@ -11,6 +11,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import PropertyDetails from "./pages/PropertyDetails";
 import CreateProperty from "./pages/CreateProperty";
+import EditProperty from "./pages/EditProperty";
 import Admin from "./pages/Admin";
 import Auth from "./pages/Auth";
 
@@ -36,6 +37,7 @@ const App = () => {
             <Route path="/" element={<Index />} />
             <Route path="/property/:id" element={<PropertyDetails />} />
             <Route path="/create-property" element={<CreateProperty />} />
+            <Route path="/edit-property/:id" element={<EditProperty />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="*" element={<NotFound />} />
