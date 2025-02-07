@@ -86,7 +86,7 @@ const Admin = () => {
               {isMobile ? "Dashboard" : "Property Owner Dashboard"}
             </h2>
           </div>
-          <div className="flex items-center gap-2 sm:gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
             {!isMobile && (
               <span className="text-sm text-muted-foreground truncate max-w-[200px]">
                 {user?.email}
@@ -96,9 +96,10 @@ const Admin = () => {
               variant="outline" 
               size={isMobile ? "icon" : "default"} 
               onClick={handleLogout}
+              className="mr-2"
             >
               <LogOut className="h-4 w-4" />
-              {!isMobile && "Logout"}
+              {!isMobile && <span className="ml-2">Logout</span>}
             </Button>
           </div>
         </div>
