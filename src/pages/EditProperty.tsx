@@ -19,11 +19,25 @@ const EditProperty = () => {
     price: "",
     bedrooms: "",
     bathrooms: "",
-    type: "",
+    property_type: "", // Changed from 'type' to 'property_type' to match the database schema
     owner_number: "",
   });
 
   useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast({
+          variant: "destructive",
+          title: "Authentication required",
+          description: "Please login to edit properties",
+        });
+        navigate("/auth");
+        return;
+      }
+      fetchProperty();
+    };
+
     const fetchProperty = async () => {
       try {
         const { data, error } = await supabase
@@ -40,7 +54,7 @@ const EditProperty = () => {
             price: String(data.price),
             bedrooms: String(data.bedrooms),
             bathrooms: String(data.bathrooms),
-            type: data.type,
+            property_type: data.property_type,
             owner_number: data.owner_number,
           });
         }
@@ -50,17 +64,29 @@ const EditProperty = () => {
           title: "Error",
           description: error.message,
         });
+        navigate("/admin");
       }
     };
 
-    if (id) fetchProperty();
-  }, [id, toast]);
+    if (id) checkAuth();
+  }, [id, toast, navigate]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
 
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast({
+          variant: "destructive",
+          title: "Authentication required",
+          description: "Please login to edit properties",
+        });
+        navigate("/auth");
+        return;
+      }
+
       const { error } = await supabase
         .from("properties")
         .update({
@@ -69,7 +95,7 @@ const EditProperty = () => {
           price: Number(property.price),
           bedrooms: Number(property.bedrooms),
           bathrooms: Number(property.bathrooms),
-          type: property.type,
+          property_type: property.property_type,
           owner_number: property.owner_number,
         })
         .eq("id", id);
@@ -152,10 +178,10 @@ const EditProperty = () => {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="type">Property Type</Label>
+          <Label htmlFor="property_type">Property Type</Label>
           <Select
-            value={property.type}
-            onValueChange={(value) => setProperty({ ...property, type: value })}
+            value={property.property_type}
+            onValueChange={(value) => setProperty({ ...property, property_type: value })}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select property type" />
@@ -188,3 +214,4 @@ const EditProperty = () => {
 };
 
 export default EditProperty;
+
