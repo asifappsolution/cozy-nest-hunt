@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { PropertyCard } from "@/components/PropertyCard";
 import { Link, useNavigate } from "react-router-dom";
-import { Plus, Home, LogOut } from "lucide-react";
+import { Plus, Home, LogOut, UserCog } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -87,6 +87,14 @@ const Admin = () => {
                 {!isMobile && "Back to Home"}
               </Link>
             </Button>
+            <Button
+              variant="outline"
+              size={isMobile ? "icon" : "default"}
+              className="shrink-0"
+            >
+              <UserCog className="h-4 w-4" />
+              {!isMobile && "Admin"}
+            </Button>
             <h2 className="text-base sm:text-lg font-semibold truncate">
               {isMobile ? "Dashboard" : "Property Owner Dashboard"}
             </h2>
@@ -101,7 +109,7 @@ const Admin = () => {
               variant="outline" 
               size={isMobile ? "icon" : "default"} 
               onClick={handleLogout}
-              className="relative z-20 shrink-0 w-8 h-8 sm:w-auto sm:h-auto"
+              className="shrink-0"
             >
               <LogOut className="h-4 w-4" />
               {!isMobile && <span className="ml-2">Logout</span>}
