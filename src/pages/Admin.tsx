@@ -101,7 +101,7 @@ const Admin = () => {
               variant="outline" 
               size={isMobile ? "icon" : "default"} 
               onClick={handleLogout}
-              className="relative z-10 shrink-0 w-10 h-10 sm:w-auto sm:h-auto"
+              className="relative z-20 shrink-0 w-8 h-8 sm:w-auto sm:h-auto"
             >
               <LogOut className="h-4 w-4" />
               {!isMobile && <span className="ml-2">Logout</span>}
