@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { Bed, Bath, MapPin, ArrowLeft } from "lucide-react";
+import { Bed, Bath, MapPin, ArrowLeft, Phone } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -158,9 +158,16 @@ const PropertyDetails = () => {
             <h2 className="text-xl lg:text-2xl font-semibold">৳{property.price.toLocaleString()}/month</h2>
           </div>
 
-          <div>
-            <h3 className="text-base lg:text-lg font-semibold mb-2">Description</h3>
-            <p className="text-muted-foreground whitespace-pre-wrap text-sm lg:text-base">{property.description}</p>
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-base lg:text-lg font-semibold mb-2">Description</h3>
+              <p className="text-muted-foreground whitespace-pre-wrap text-sm lg:text-base">{property.description}</p>
+            </div>
+            
+            <div className="flex items-center gap-2 pt-2">
+              <Phone className="text-muted-foreground" size={16} />
+              <span className="text-muted-foreground">Contact: {property.owner_number}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -169,3 +176,4 @@ const PropertyDetails = () => {
 };
 
 export default PropertyDetails;
+
