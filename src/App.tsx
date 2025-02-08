@@ -26,9 +26,14 @@ const App = () => {
         <Sonner />
         <BrowserRouter>
           <div className="fixed top-4 right-4 z-50">
-            <Button variant="outline" size="icon" asChild>
+            <Button 
+              variant="outline" 
+              size="icon" 
+              asChild 
+              className="h-8 w-8 sm:h-10 sm:w-10 shrink-0"
+            >
               <Link to="/admin" className="hover:no-underline">
-                <UserCog className="h-4 w-4" />
+                <UserCog className="h-4 w-4 sm:h-[18px] sm:w-[18px]" />
                 <span className="sr-only">Admin Dashboard</span>
               </Link>
             </Button>
