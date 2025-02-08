@@ -25,7 +25,7 @@ const App = () => {
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <div className="fixed top-4 right-4 z-50">
+          <div className="fixed top-4 right-4 sm:right-20 z-40">
             <Button 
               variant="outline" 
               size="icon" 
